@@ -1,0 +1,26 @@
+git config --global user.name <user git user name>
+git config --global user.email <user email>
+ 
+Create your branch first in GitHub from the main in GUI
+git clone <git_https_url>  for creating clone to add new reporitry in VS code
+
+git branch -a [ to check breanch in exiting reporitry
+after creating new branch through GUI  below cli help to check status for new breach
+git pull 
+
+git status  # To see current status
+
+git commit -m "UR message"
+
+git push
+
+
+
+git checkout <ur branch name>
+ 
+
+
+git add <file name>
+
+
+git status  # To see current status
