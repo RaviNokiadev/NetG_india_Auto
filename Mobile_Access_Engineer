@@ -1,0 +1,30 @@
+1- What planning tools have you used in your previous projects?
+2. Can you explain how you plan a new 4G/5G site?
+Answer:
+Site planning involves analyzing site grid data, traffic demand, and clutter type. I assess nearby site performance, decide antenna height, tilt, and azimuth,
+then simulate coverage using Atoll. Based on that, I finalize the configuration and work with implementation teams for execution.
+
+***
+Q2 -What factors do you consider for site selection in 5G planning?
+Ans- I look at user density, existing coverage gaps, line-of-sight (LOS) for mmWave, and backhaul availability. Also, spectrum band (low/mid/high) and the type of environment (urban/rural) greatly influence site suitability.
+
+***
+
+Q3- Have you worked with both NSA and SA 5G? What's the difference?
+I’ve worked with both. NSA (Non-Standalone) relies on LTE for control plane and anchors data through NR. SA (Standalone) is independent with a dedicated 5G core and enables ultra-low latency and advanced features like slicing. 
+I optimized KPIs in both architectures, focusing on different interworking scenarios.
+
+**********
+Q4 - You’ve mentioned experience with NetAct and U2020
+ Q-5 Which parameters are filled while doing the data fill for a new BTS in the BSC?
+
+******************* Traffic utilization **********
+received_total_octets	transmitted_total_octets	capacity_new	max	utilization
+5	3	10	5	50
+6	4	10	6	60
+7	6	100	7	7
+8	7	10	8	80
+7.6484E-05	8	10	8	80
+
+
+
