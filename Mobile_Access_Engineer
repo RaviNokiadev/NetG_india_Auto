@@ -26,5 +26,12 @@ received_total_octets	transmitted_total_octets	capacity_new	max	utilization
 8	7	10	8	80
 7.6484E-05	8	10	8	80
 
+3.	BSC Signalling Unit (BCXU): Abis and AOIP signalling.
+4.	Packet Control Unit (PCUM): GPRS/EDGE functions.
+5.	Transport Termination Unit for Abis (ETME): Abis User Plane termination.
+6.	Transport Termination Unit for A (ETMA): AOIP user plane termination.
+7.	General Purpose Linux Unit (GPLU): Hosts the connectivity towards the external NTP server. This is also a new addition as compared to earlier mcBSC.
+
+
 
 
