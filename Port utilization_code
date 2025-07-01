@@ -1,0 +1,95 @@
+# -*- coding: utf-8 -*-
+"""
+Created on Fri May 30 11:34:26 2025
+@author: bhensada
+
+IP Link Utilisation Report
+"""
+
+# --------------------------------------------------------------------------
+# Function to add sitename + port column using pandas
+def pd_task1_s_p():
+    df['sitename_Port'] = df['sitename'] + df['displayed_name']
+
+# --------------------------------------------------------------------------
+# ==== Main() ====
+from tkinter import Tk
+from tkinter.filedialog import askopenfilename
+import os
+from openpyxl import load_workbook
+import pandas as pd
+import sys
+
+# Hide the root Tkinter window
+Tk().withdraw()
+
+# Ask for required files
+file_path = askopenfilename(title="Select Utilisation Raw dump", filetypes=[("Excel Files", "*.xlsx")])
+file_path_M1 = askopenfilename(title="Select a Capacity Master file", filetypes=[("Excel Files", "*.xlsx")])
+file_path_N1 = askopenfilename(title="Select Output File Name", filetypes=[("Excel Files", "*.xlsx")])
+
+# Load raw utilization file
+df_xls = pd.ExcelFile(file_path)
+df = pd.read_excel(file_path, sheet_name=df_xls.sheet_names[0])
+
+# Load capacity master file
+dfM1_xls = pd.ExcelFile(file_path_M1)
+dfM1 = pd.read_excel(file_path_M1, sheet_name=dfM1_xls.sheet_names[0])
+
+# ========================= Validate Columns =============================
+required_columns = {'date', 'sitename', 'displayed_name', 'received_total_octets', 'transmitted_total_octets'}
+if not required_columns.issubset(set(df.columns.str.lower())):
+    print("Error in Raw Dump: Missing required columns.")
+    print("Found columns:", df.columns.tolist())
+    sys.exit()
+
+expected_capacity_columns = {'sitename_Port', 'capacity_new'}
+if not expected_capacity_columns.issubset(set(dfM1.columns)):
+    print("Error in Capacity Master file: Missing required columns.")
+    print("Found columns:", dfM1.columns.tolist())
+    sys.exit()
+
+# ========================= Process Data ================================
+# Task 1: Create sitename_Port column
+pd_task1_s_p()
+
+# Merge capacity info from master
+df1 = pd.merge(df, dfM1, on='sitename_Port', how='left')
+
+# Calculate max octets and utilisation
+df = df1
+df['Max'] = df[['received_total_octets', 'transmitted_total_octets']].max(axis=1)
+df['Utilisation'] = df['Max'] * 100 / df['capacity_new']
+
+# Extract date-related fields
+df['date1'] = df['date'].dt.strftime('%d-%b-%Y')
+mWeekDay = df['date'].dt.day_name().str[:3]
+mMonth = df['date'].dt.month_name().str[:3]
+df['Minute'] = df['date'].dt.minute
+mDay = df['date'].dt.day
+mTime = df['date'].dt.time
+
+df['IGW_Date'] = mWeekDay + ' ' + mMonth + ' ' + mDay.astype(str) + ' ' + mTime.astype(str) + ' EAT ' + df['date'].dt.year.astype(str)
+
+# Create Pivot Table
+df = df.sort_values(by='date')
+dfP = pd.pivot_table(df, values='Utilisation',
+                     index='sitename_Port',
+                     columns='date1',
+                     aggfunc='max')
+
+# Get Max Utilisation of past 7 days
+tColdfP = len(dfP.columns)
+dfP['Max_7D'] = dfP.iloc[:, :tColdfP].max(axis=1)
+
+# Categorize into ranges
+bins = [0, 60, 70, 80, 90, 1000]
+labels = ['Less than 60', 'Between 60-70', 'Between 70-80', 'Between 80-90', 'More than 90']
+dfP['Range'] = pd.cut(dfP['Max_7D'], bins=bins, labels=labels, right=False)
+
+# Save to Excel
+with pd.ExcelWriter(file_path_N1) as writer:
+    df.to_excel(writer, sheet_name='data', index=False)
+    dfP.to_excel(writer, sheet_name='pivot', index=True)
+
+print("✅ Successfully completed!!")
